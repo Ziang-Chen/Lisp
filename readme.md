@@ -47,7 +47,7 @@ A variable is a symbol, which aslo treated as a key in Context, used to mappying
 
 Initially, like evry language, gloable/standard Context is defined, after enter blocks/ class/ object/ function, new context will entered, and variable will store in the new context.
 
-AtomicPy implete two type of variable, called typed variable and untyped variable. Assign operator also check types explicilty when left value is typed variable, otherwise it will be treated as untyped variable, but type will still stored in compiler for hints/optimization.
+AtomicPy implete two types of variable, called typed variable and untyped variable. Assign operator also check types explicilty when left value is typed variable, otherwise it will be treated as untyped variable, but type will still stored in compiler for hints/optimization.
 
 ```Lisp
 Syntax
@@ -83,12 +83,14 @@ Example
     (Assign, (TypeVar, 'x', 'int'), y)   
     (Assign, x, y)                        
 ```
-Type also can used in more elgent way, like
+Type also can be used in more elgent way, like
 ```python
 String = (g@("ConstantString")).Type # Define Type of String
 Float = (g@(1.23456)).Type           # Define Type of Float
 g@(Assign,  (TypeVar, 'x', Float), 1.0)
 ```
+
+Notic the return value if g@, highly related to syntax tree parser, which basically contains all neccessary inofrmation for AtomicPy.
 
 ## Function
 
@@ -100,62 +102,10 @@ Function is a procedure, can be called with arguments. Function can be defined i
 ```
 ## Class
 
+Class is a type, each object initialized from a class by method "init"
 
-
-## How to Embed LispStyle in Python
-
-Import AtomicPy Libs and Initialize Enviroment
-```python
-import Tools.pyEmbed as pebd
-from Grammer.Tokens import *
-from Compiler.Symbol import Var
-
-e=pebd.pyEnv()
-g=pebd.envAccess(e)
-```
-
-Then Enjoy, for instance, from define the variable and assign value combine with python Built-in
-```python
-y= Var('y')
-g@(Assign, y, 1)
-g@(Print, y)
-g@(Assign, y, max(2,3))
-g@(Print, y)
-```
-To, dfine and use function
-```python
-g@(FunctionDef,
-    "f", ("x", "y"),
-      (Print, 
-        (Add, 
-            (Variable, "x"), 
-            (Variable, "y")
-    )))
-
-g@(FunctionDef,
-   'g', ("x",),
-   (Print, 
-        (Variable, "x")))
-
-g@(Call, "f", 5,6) # Output: 11
-
-g@(Call, 'g', 1) # Output: 1
-```
-
-
-```python
-
-(ClassDef,
-    'ClassA',
-    (Variable 'a'),
-    (Variable 'b'),
-    (Variable 'c'),
-    (FunctionDef, 'methodA', 
-        ('arg1',
-        'arg2'),
-        (Print, (Variable, 'arg1')),
-    )
-    
-)
-
+Method call be called using following syntax
+``` python
+g@ (Call, (ObjectName, MethodName), *args)
+g@(Call, (ObjectName, MethodName))
 ```
